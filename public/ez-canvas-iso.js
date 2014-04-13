@@ -7,26 +7,22 @@
 /////////
 var gridSize = 25;
 var APP = {};
+APP.Canvases = {};
 
-
-var c1 = document.getElementById('canvas1');
-var c2 = document.getElementById('canvas2');
-var c3 = document.getElementById('canvas3');
-c1.width = $('body').width();
-c1.height = 500;
-c2.width = $('body').width();
-c2.height = 500;
-c3.width = $('body').width();
-c3.height = 500;
-// var ctx = c.getContext('2d');
+$('canvas').each(function() {
+	APP.Canvases[this.id] = this;
+	APP.Canvases[this.id].width = $('body').width();
+	APP.Canvases[this.id].height = 500;
+	console.log(this);
+})
 
 var canvasCenter = (function(){
 	var x = $('#canvas1').width() / 2;
-	var y = $('#canvas1').height() / 4;
+	var y = $('#canvas1').height() / 16;
 	return {x: x, y: y}
 })()
 
-function isoToCart(z, y, x) {
+function isoToCart(x, y, z) {
 	var X =  -x + y - 2;
 	var Y = 0.5 * (x + y) - (z / 2) + 1;
 	return { X: X, Y: Y};
@@ -40,7 +36,9 @@ newArray.forEach(function(el, ind) {
 		el.forEach(function(el, ind) {
 
 			if (el === 1) {
-				cartOBJ = isoToCart(i, j, ind);
+				var cartOBJ = isoToCart(i, j, ind);
+				var canvas = APP.Canvases['c'+(ind+i+j)];
+
 
 				var X = canvasCenter.x + (cartOBJ.X * gridSize),
 				    Y = canvasCenter.y + (cartOBJ.Y * gridSize),
@@ -50,9 +48,11 @@ newArray.forEach(function(el, ind) {
 					y2 = Y + (gridSize * 0.5),
 					y3 = Y + gridSize;
 
-				el = c1.getContext('2d');
+				el = canvas.getContext('2d');
 				el.fillStyle = '#006600';
-				el.strokeStyle = '#010101';
+				el.strokeStyle = '#005500';
+				el.lineJoin = 'round';
+				el.lineWidth = 1.5;
 				el.beginPath();
 				el.moveTo(X, Y);
 				el.lineTo(x1, y1);
@@ -63,6 +63,8 @@ newArray.forEach(function(el, ind) {
 				el.fill();
 
 				el.fillStyle = '#926239';
+				el.strokeStyle = '#423229';
+
 				el.beginPath();
 				el.moveTo(X, Y);
 				el.lineTo(x1, y2);
@@ -72,6 +74,12 @@ newArray.forEach(function(el, ind) {
 				el.stroke();
 				el.fill();
 
+				// var grd = c1.createLinearGradient(X,Y,(X+gridSize),(Y+gridSize));
+				// grd.addColorStop(0,"#926239");
+				// grd.addColorStop(1,"#926200");
+
+				// el.fillStyle = grd;
+
 				el.beginPath();
 				el.moveTo(x1, y2);
 				el.lineTo(x2, Y);
@@ -79,7 +87,19 @@ newArray.forEach(function(el, ind) {
 				el.lineTo(x1, y3);
 				el.closePath();
 				el.stroke();
-				el.fill();			
+				el.fill();
+
+				// shading
+				el.strokeStyle = 'rgba(35, 29, 0, 0.5)';	
+				el.beginPath();
+				el.moveTo(x2, y2);
+				el.lineTo(x2, (y2 - 1));
+				el.lineTo(x1, (y3 - 1));
+				el.lineTo(X, (y2 - 1));
+				el.lineTo(X, y2);
+				el.lineTo(x1, y3);
+				el.closePath();
+				el.stroke();			
 
 		}
 	})
