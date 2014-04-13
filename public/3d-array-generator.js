@@ -11,7 +11,7 @@ function make3dArray(z,y,x) {
  	for (i = 0; i < z; i++) {
 		for (j = 0; j < y; j++) {
 			for (k = 0; k < x; k++) {
-				if (i > 10) {
+				if ( 0.8*i + 0.8*j + 1*k < 17) {
 					temp[i][j].push(1);
 				} else {
 					temp[i][j].push(0);
@@ -23,10 +23,10 @@ function make3dArray(z,y,x) {
 }
 
 var startTime = performance.now();
-var newArray = make3dArray(64,128,128);
+var newArray = make3dArray(9,16,16);
 endTime = performance.now();
-console.log("done!! took %s seconds", ((endTime-startTime)/1000));
-console.log(newArray);
+// console.log("done!! took %s seconds", ((endTime-startTime)/1000));
+// console.log(newArray);
 
 var temp = 0;
 
@@ -40,5 +40,5 @@ for (i = 0; i < newArray.length; i++) {
  	}
  	
 endTime = performance.now();
-console.log("done!! took %s seconds", ((endTime-startTime)/1000));
-console.log(temp);
+// console.log("done!! took %s seconds", ((endTime-startTime)/1000));
+// console.log(temp);
