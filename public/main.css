@@ -5,16 +5,3 @@ html, body {
 canvas {
 	position: absolute;
 }
-
-#canvas1 {
-	z-index: 10;
-}
-#canvas2 {
-	z-index: 10;
-}
-#canvas3 {
-	z-index: 10;
-}
-#canvas4 {
-	z-index: 10;
-}
