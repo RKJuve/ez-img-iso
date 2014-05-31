@@ -32,9 +32,9 @@ function GenerateWorld(array, opts) {
 	function genHill(num) {
 		for (var hill = 0; hill < num; hill++) {
 			var apex = {};
-				apex.x = Math.floor( Math.random() * (x - 1) ),
-				apex.y = Math.floor( Math.random() * (y - 1) ),
-				apex.z = Math.floor( Math.random() * (z - 1) );
+				apex.x = Math.floor( Math.random() * x ),
+				apex.y = Math.floor( Math.random() * y ),
+				apex.z = Math.floor( Math.random() * z );
 			 console.log(apex);
 			
 			for (var i = apex.z; i < z; i += 1) {
@@ -45,9 +45,7 @@ function GenerateWorld(array, opts) {
 
 						var newX = Math.max(0,Math.min(x-1,apex.x+k)),
 						    newY = Math.max(0,Math.min(y-1,apex.y+j)),
-						    newZ = Math.max(0,Math.min(z-1,i));
-
-						console.log(newX + ', ' + newY + ', ' + newZ)
+						    newZ = Math.max(0,Math.min(z,i));
 					    
 					    array[newX][newY][newZ] = 1;
 					}
