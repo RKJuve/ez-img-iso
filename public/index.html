@@ -6,16 +6,27 @@
 		
 	    <!-- js before page ready -->
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+		<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
+		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+		<script src="jquery.ui.touch-punch.min.js"></script>
 		<script src="3d-array-generator.js"></script>
 
 		<!-- css -->
 		<link rel="stylesheet" type="text/css" href="main.css">
 
+
 	</head>
 	<body>
-
+	<button id="redraw" onclick="redraw('#inner', newArray)">add hill <br> and redraw</button>
+		<div id="outer">
+			<div id="inner">
+			
+			</div>
+		</div>
 	</body>
 	<!-- js after page ready -->
-	<script src="canvas-helper.js"></script>
 	<script src="ez-canvas-iso.js"></script>
+		<script type="text/javacript">
+			    
+		</script>
 </html>
