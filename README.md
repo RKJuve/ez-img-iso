@@ -11,8 +11,6 @@ first attempts at a native canvas isomorphic display engine
 
 
 ### TODO:
-- better 3d array/world generation
-- test using multiple canvases to achieve z-layers
-- which block drawn depends on source array value
-- naming system for canvas elements to allow selective hiding/deleting
-- update drawing with new blocks
+- better world generation
+- data structure for canvas elements to allow selective hiding/deleting
+- character objects, with controls!
