@@ -5,9 +5,17 @@
 /////////
 // GLOBALS
 /////////
-var gridSize = 20;
+var gridSize = 40;
 var APP = {};
 APP.Canvases = {};
+
+
+for (i = 0; i < 150; i++) {
+	var temp = document.createElement('canvas')
+	temp.id = 'c' + i;
+	temp.style['z-index'] = i;
+	$('#inner').append(temp);
+}
 
 // set up tile image
 var Tile = new Image();
@@ -18,8 +26,8 @@ var Tile = new Image();
 
 $('canvas').each(function() {
 	APP.Canvases[this.id] = this;
-	this.width = 600;
-	this.height = 600;
+	this.width = 1400;
+	this.height = 800;
 })
 
 var canvasCenter = (function(){
@@ -30,22 +38,22 @@ var canvasCenter = (function(){
 
 function isoToCart(x, y, z) {
 	var X =  y - x - 2;
-	var Y = 0.5 * (x + y) + (z / 2) + 1;
+	var Y = 0.5 * (x + y) + (z / 2);
 	return { X: X, Y: Y};
 }
 function drawTile(x,y,z) {
 	var cartOBJ = isoToCart(x, y, z);
-	var canvas = APP.Canvases['c'+(50-(z-y-x))];
-	console.log(canvas.id);
+	var canvas = APP.Canvases[('c'+(75-(z-y-x)))];
+	//console.log(canvas.id);
 
-	var X = canvasCenter.x + (cartOBJ.X * gridSize),
-	    Y = canvasCenter.y + (cartOBJ.Y * gridSize),
+	var X = canvasCenter.x + (cartOBJ.X * gridSize) + 20,
+	    Y = canvasCenter.y + (cartOBJ.Y * gridSize) - 100,
 		x1 = X + gridSize,
 		x2 = X + (gridSize * 2),
 		y1 = Y - (gridSize * 0.5),
 		y2 = Y + (gridSize * 0.5),
 		y3 = Y + gridSize;
-	console.log(X +', '+Y)
+	//console.log(canvas)
 	el = canvas.getContext('2d');
 	
 	el.drawImage(Tile, X, Y);
@@ -104,9 +112,49 @@ function drawTile(x,y,z) {
 	// el.stroke();
 }
 
-var queue = new Queue();
-var counter = 0;
+function redraw(container, array) {
+	$(container).children().remove().promise().done(function(){
+		console.log('----deleted----');
 
+		jQuery.when((function(){
+			console.log('----generate----');
+			array = GenerateWorld(array);
+		})()).done(function(){
+			console.log('----yup----')
+			for (i = 0; i < 150; i++) {
+				var temp = document.createElement('canvas')
+				temp.id = 'c' + i;
+				temp.style['z-index'] = i;
+				$('#inner').append(temp);
+			}
+
+			$('canvas').each(function() {
+				APP.Canvases[this.id] = this;
+				this.width = 1400;
+				this.height = 800;
+			})
+			var x = array.length,
+				y = array[0].length,
+				z = array[0][0].length;
+				console.log(z);
+
+			for (i = 0; i < x; i++) {
+				for (j = 0; j < y; j++) {
+					for (k = 0; k < z; k++) {
+						if (array[i][j][k] === 1) {
+							drawTile(i,j,k);
+						}
+					}
+				}
+			}
+		})
+	})
+	// .then(function(){
+	// 	console.log('----yup----')
+	// }, function() {
+	// 	console.log('----narp----');
+	// })
+}
 
 Tile.onload = function() {
 // draw newArray as isotiles
@@ -114,14 +162,11 @@ for (i = 0; i < newArray.length; i++) {
 	for (j = 0; j < newArray[0].length; j++) {
 		for (k = 0; k < newArray[0][0].length; k++) {
 			if (newArray[i][j][k] === 1) {
-				counter++;
-				queue.enqueue([i,j,k], (50-(k-j-i)) );
+				drawTile(i,j,k);
 			}
 		}
 	}
 }
-for (i = counter; i > 0; i--) {
-	var temp = queue.dequeue()
-	drawTile(temp[0],temp[1],temp[2]);	
-}
-}
+};
+
+$("#inner").draggable({ zIndex: 9999 });
