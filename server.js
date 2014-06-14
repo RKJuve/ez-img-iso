@@ -10,6 +10,6 @@ var app = express()
         .use(express.static(buildDir));
 
 // start node server
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 3001;
 app.listen(port);
 console.log("The server is now listening on port %s", port);

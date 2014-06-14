@@ -17,9 +17,15 @@ canvas {
 }
 
 #inner {
+	position: relative;
 	width: 100%;
 	min-height: 100%;
 	z-index: 8888;
+}
+
+.tile {
+	position: absolute;
+	
 }
 
 body {
