@@ -13,15 +13,22 @@
 
 		<!-- css -->
 		<link rel="stylesheet" type="text/css" href="main.css">
-
+		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
 	</head>
 	<body>
-	<button id="redraw" onclick="redraw('#inner', newArray)">add hill <br> and redraw</button>
+	<button id="redraw" onclick="redraw('#inner', World)">add hill <br> and redraw</button>
 		<div id="outer">
 			<div id="inner">
 			
 			</div>
+		</div>
+
+		<div id="controls">
+			<i onclick="moveTest(0,-1,0)" id="upLeft" class="fa fa-4x fa-arrow-left"></i>
+			<i onclick="moveTest(-1,0,0)" id="upRight" class="fa fa-4x fa-arrow-up"></i>
+			<i onclick="moveTest(0,1,0)" id="downRight" class="fa fa-4x fa-arrow-right"></i>
+			<i onclick="moveTest(1,0,0)" id="downLeft" class="fa fa-4x fa-arrow-down"></i>
 		</div>
 	</body>
 	<!-- js after page ready -->

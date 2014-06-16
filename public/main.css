@@ -6,14 +6,56 @@ html, body {
     overflow: hidden;
 }
 
-canvas {
+#controls {
+	position: fixed;
+	left: -240px;
+	bottom: -140px;
+	width: 400px;
+	height: 300px;
+	border: 1px black solid;
+	border-radius: 100px;
+	background: rgb(23, 23, 77);
+	z-index: 777777;
+}
+
+#controls i {
+	transform: rotate(45deg);
+	-webkit-transform: rotate(45deg);
+}
+#controls i:active {
+	color: #222222;
+	transform: rotate(45deg) scale(1.1,1.1);
+	-webkit-transform: rotate(45deg) scale(1.1,1.1);
+}
+
+#upLeft {
 	position: absolute;
+	top: 40px;
+	right: 100px;
+}
+#upRight {
+	position: absolute;
+	top: 40px;
+	right: 40px;
+}
+#downRight {
+	position: absolute;
+	top: 100px;
+	right: 40px;
+}
+#downLeft {
+	position: absolute;
+	top: 100px;
+	right: 100px;
 }
 
 #outer {
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
 }
 
 #inner {
@@ -21,11 +63,31 @@ canvas {
 	width: 100%;
 	min-height: 100%;
 	z-index: 8888;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
 }
 
 .tile {
 	position: absolute;
-	
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+
+}
+
+.player {
+	position: absolute;
+	width: 40px;
+	-webkit-transition: 0.15s ease-in;
+    -moz-transition: 0.15s ease-in;
+    -o-transition: 0.15s ease-in;
+    transition: 0.15s ease-in;
+
+
+    -moz-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
 }
 
 body {
@@ -33,10 +95,10 @@ body {
 }
 
 #redraw {
-	height: 100px;
+	height: 55px;
 	position: fixed;
 	top: 0px;
 	left: 0px;
 	z-index: 9999;
-	font-size: 18px;
+	font-size: 14px;
 }

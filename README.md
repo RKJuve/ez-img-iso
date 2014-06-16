@@ -1,7 +1,7 @@
-ez-canvas-iso
+ez-img-iso
 =============
 
-first attempts at a native canvas isomorphic display engine
+trying img tags instead of canvas.
 ![v0.0.0](/etc/v0.0.1.png)
 
 1. ```git clone https://github.com/RKJuve/ez-canvas-iso.git && cd ./ez-canvas-iso```

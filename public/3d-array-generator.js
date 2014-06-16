@@ -13,6 +13,8 @@ function Array3d(x,y,z) {
 			for (k = 0; k < z; k++) {
 				if (k === (z-1) ) {
 					temp[i][j].push(1);
+				} else if (j > 5 && j < 8 && i > 5 && i < 8) {
+					temp[i][j].push(1);
 				} else {
 					temp[i][j].push(0);
 				}
@@ -36,7 +38,7 @@ function GenerateWorld(array, opts) {
 			var apex = {};
 				apex.x = Math.floor( Math.random() * x ),
 				apex.y = Math.floor( Math.random() * y ),
-				apex.z = Math.floor( Math.random() * z );
+				apex.z = Math.ceil( Math.random() * z );
 			 console.log(apex);
 			
 			for (var i = apex.z; i < z; i += 1) {
@@ -64,7 +66,7 @@ function GenerateWorld(array, opts) {
 	return array;
 }
 
-var newArray = Array3d(16,16,9);
+var World = Array3d(16,16,9);
 
-newArray = GenerateWorld(newArray);
+//newArray = GenerateWorld(newArray);
 
