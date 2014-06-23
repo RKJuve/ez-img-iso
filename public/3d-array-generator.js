@@ -13,9 +13,11 @@ function Array3d(x,y,z) {
 			for (k = 0; k < z; k++) {
 				if (k === (z-1) ) {
 					temp[i][j].push(1);
-				} else if (j > 5 && j < 8 && i > 5 && i < 8) {
-					temp[i][j].push(1);
-				} else {
+				} 
+				// else if (j > 5 && j < 8 && i > 5 && i < 8) {
+				// 	temp[i][j].push(1);
+				// }
+				 else {
 					temp[i][j].push(0);
 				}
 			}
