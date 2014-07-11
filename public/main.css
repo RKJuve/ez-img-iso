@@ -9,21 +9,10 @@ html, body {
 #buildCtrl {
 	background: rgb(23, 23, 77);
 	position: relative;
-	top: 40px;
-	left: 400px;
-	height: 120px;
-	width: 100px;
-}
-
-#buildCtrl form {
-	height: 120px;
-	width: 100px;
-	color: white;
-}
-
-#buildCtrl form input {
-	width: 40px;
-	height: 20px;
+	top: 80px;
+	left: 350px;
+	height: 80px;
+	width: 150px;
 }
 
 #controls {
@@ -116,22 +105,4 @@ html, body {
 
 body {
 	background-color: darkslategray;
-}
-
-#redraw {
-	height: 55px;
-	position: fixed;
-	top: 0px;
-	left: 0px;
-	z-index: 9999;
-	font-size: 14px;
-}
-
-#draw {
-	height: 55px;
-	position: fixed;
-	top: 55px;
-	left: 0px;
-	z-index: 9999;
-	font-size: 14px;
 }

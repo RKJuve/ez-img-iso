@@ -230,6 +230,10 @@ ISO = (function(){
 				target.appendChild(this.img);
 			}
 
+			this.remove = function() {
+				target.removeChild(this.img);
+			}
+
 			return this;
 		}
 		// Returns a Player object with a given name and position
@@ -271,19 +275,23 @@ ISO = (function(){
 				switch (directionInt) {
 					case 0:
 						this.facing = 0;
-						this.htmlElement.style.backgroundPosition = '50px 68px';
+						this.htmlElement.style.backgroundPositionX = '50px';
+						this.htmlElement.style.backgroundPositionY = '68px';
 						break;
 					case 1:
 						this.facing = 1;
-						this.htmlElement.style.backgroundPosition = '0px 68px';
+						this.htmlElement.style.backgroundPositionX = '0px ';
+						this.htmlElement.style.backgroundPositionY = '68px';
 						break;
 					case 2:
 						this.facing = 2;
-						this.htmlElement.style.backgroundPosition = '50px 0px';
+						this.htmlElement.style.backgroundPositionX = '50px';
+						this.htmlElement.style.backgroundPositionY = '0px';
 						break;
 					case 3:
 						this.facing = 3;
-						this.htmlElement.style.backgroundPosition = '0px 0px';
+						this.htmlElement.style.backgroundPositionX = '0px ';
+						this.htmlElement.style.backgroundPositionY = '0px';
 						break;
 				}
 			}
