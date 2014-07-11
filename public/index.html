@@ -1,23 +1,32 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" ng-app="app">
 	<head>
 		<meta charset="UTF-8">
-		<title>ez-canvas-iso</title>
+		<title>ez-img-iso super demo</title>
+
+
 		
 	    <!-- js before page ready -->
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 		<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
 		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
 		<script src="jquery.ui.touch-punch.min.js"></script>
-		<script src="3d-array-generator.js"></script>
+
+		<!-- angular cdn -->
+		<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.min.js"></script>
+
+		<!-- angular app -->
+		<script src="ng/controllers.js"></script>
+		<script src="ng/app.js"></script>
 
 		<!-- css -->
 		<link rel="stylesheet" type="text/css" href="main.css">
 		<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
 	</head>
-	<body>
-	<button id="redraw" onclick="redraw('#inner', World)">add hill <br> and redraw</button>
+	<body ng-controller="MainCtrl">
+	<!-- <button id="redraw" onclick="redraw('#inner', World)">add hill <br> and redraw</button>
+	<button id="draw" onclick="Draw()">RECUR!</button> -->
 		<div id="outer">
 			<div id="inner">
 			
@@ -25,15 +34,21 @@
 		</div>
 
 		<div id="controls">
-			<i onclick="moveTest(0,-1,0)" id="upLeft" class="fa fa-4x fa-arrow-left"></i>
-			<i onclick="moveTest(-1,0,0)" id="upRight" class="fa fa-4x fa-arrow-up"></i>
-			<i onclick="moveTest(0,1,0)" id="downRight" class="fa fa-4x fa-arrow-right"></i>
-			<i onclick="moveTest(1,0,0)" id="downLeft" class="fa fa-4x fa-arrow-down"></i>
+			<i ng-click="moveTest(0,-1,0)" id="upLeft" class="fa fa-4x fa-arrow-left"></i>
+			<i ng-click="moveTest(-1,0,0)" id="upRight" class="fa fa-4x fa-arrow-up"></i>
+			<i ng-click="moveTest(0,1,0)" id="downRight" class="fa fa-4x fa-arrow-right"></i>
+			<i ng-click="moveTest(1,0,0)" id="downLeft" class="fa fa-4x fa-arrow-down"></i>
+
+			<div id="buildCtrl">
+				<form id="buildLevels">
+					<input type="checkbox" value="2"/>top<br>
+					<input type="checkbox" value="1"/>topmid<br>
+					<input type="checkbox" value="0"/>midbot<br>
+					<input type="checkbox" value="-1"/>bot
+				</form>
+			</div>
 		</div>
 	</body>
 	<!-- js after page ready -->
-	<script src="ez-canvas-iso.js"></script>
-		<script type="text/javacript">
-			    
-		</script>
+	<script src="ez-img-iso.js"></script>
 </html>
