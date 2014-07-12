@@ -171,20 +171,25 @@ ISO = (function(){
 			return array;
 		}
 		//
-		var getTileImgSrc = function(tileNum) {
+		function getTileImgSrc(tileNum) {
 			// hash of tile number keys with img src values
-			return;
+			var hash = {
+				'1': 'tiletest.png'
+			}
+			return hash[tileNum];
 		};
-		var getTileType = function(tileNum) {
+		function getTileType(tileNum) {
 			// hash of tile number keys with tile type string values
-			return;
+			var hash = {
+				'1': 'dirt'
+			}
+			return hash[tileNum];
 		};
 		// set up tile image
-		var Tile = function(tileNum, position) {
-
+		function Tile(tileNum) {
 			this.type = getTileType(tileNum);
 			this.imgSrc = getTileImgSrc(tileNum);
-			this.position = position;
+			this.rendered = false;
 
 			// method to check if image is visible in document
 			// this.img.isVisible = function() {
@@ -211,35 +216,37 @@ ISO = (function(){
 			// 	}
 			// }
 
-			this.render = function() {
-				var x = this.position[0],
-					y = this.position[1],
-					z = this.position[2];
+			// this.render = function() {
+			// 	var x = this.position[0],
+			// 		y = this.position[1],
+			// 		z = this.position[2];
 				
-				var cartOBJ = isoToCart(x,y,z);
-				var X = targetCenter.x + (cartOBJ.X * gridSize) + 220,
-				    Y = targetCenter.y + (cartOBJ.Y * gridSize) - 950;
+			// 	var cartOBJ = isoToCart(x,y,z);
+			// 	var X = targetCenter.x + (cartOBJ.X * gridSize) + 220,
+			// 	    Y = targetCenter.y + (cartOBJ.Y * gridSize) - 950;
 
-				this.img = new Image();
-				this.img.src = 'tiletest.png';
-				this.img.className = 'tile';
-				this.img.style.left = X.toString() + 'px';
-				this.img.style.top = Y.toString() + 'px';
-				this.img.style['z-index'] = (75 - (z-y-x));
+			// 	this.img = new Image();
+			// 	this.img.src = 'tiletest.png';
+			// 	this.img.className = 'tile';
+			// 	this.img.style.left = X.toString() + 'px';
+			// 	this.img.style.top = Y.toString() + 'px';
+			// 	this.img.style['z-index'] = (75 - (z-y-x));
 
-				target.appendChild(this.img);
-			}
+			// 	target.appendChild(this.img);
+			// }
 
-			this.remove = function() {
-				target.removeChild(this.img);
+			this.removeElement = function() {
+				if (this.img) {
+					target.removeChild(this.img);
+				}
 			}
 
 			return this;
 		}
 		// Returns a Player object with a given name and position
-		var Player = function(name, position, TileWorld) {
+		function Player(name, pos, World) {
 
-			var cartOBJ = isoToCart(position[0], position[1], position[2]);
+			var cartOBJ = isoToCart(pos[0], pos[1], pos[2]);
 
 			var X = targetCenter.x + (cartOBJ.X * gridSize) + 235,
 			    Y = targetCenter.y + (cartOBJ.Y * gridSize) - 962
@@ -249,21 +256,50 @@ ISO = (function(){
 			htmlElement.className = 'player',
 			htmlElement.style.left = X + 'px',
 			htmlElement.style.top = Y + 'px',
-			htmlElement.style['z-index'] = (75 - (position[2] - position[1] - position[0]));
+			htmlElement.style['z-index'] = (75 - (pos[2] - pos[1] - pos[0]));
 
 			target.appendChild(htmlElement);
 			
 			var move = function(x,y,z) {
-				if (TileWorld[this.position[0]+x][this.position[1]+y][this.position[2]+z] !== 0 && TileWorld[this.position[0]+x][this.position[1]+y][this.position[2]+z-1] === 0) {
+				//check if space and space above it are open
+				// if (World[this.pos[0]+x][this.pos[1]+y][this.pos[2]+z] === 0 && World[this.pos[0]+x][this.pos[1]+y][this.pos[2]+z-1] === 0) {
+				// 	//check for supporting block, otherwise fall
+				// 	if (World[this.pos[0]+x][this.pos[1]+y][this.pos[2]+z+1] instanceof !== 0) {
+				// 		z += 1;
+				// 	} else {
+				// 		this.setLocation(this.pos[0]+x, this.pos[1]+y, this.pos[2]+z)
+						
+				// 		var Z = this.pos[2];
+				// 		while (Z < 128) { //cheesy. fix.
+				// 			if (World[this.pos[0]][this.pos[1][Z]] !== 0) {
+				// 				this.setLocation(this.pos[0], this.pos[1], Z)
+				// 			}
+				// 			Z++;
+				// 		}
+
+				// 		return;
+				// 	}
+
+				// 	//else check if space above player and step up possible
+				// } else if (World[this.pos[0]][this.pos[1]][this.pos[2]-1] === 0 && World[this.pos[0]][this.pos[1]][this.pos[2]-2]) === 0) {
+
+				// } else {
+
+				// }
+
+
+				if (World[this.pos[0]+x][this.pos[1]+y][this.pos[2]+z] !== 0 && World[this.pos[0]+x][this.pos[1]+y][this.pos[2]+z-1] === 0) {
 					z -= 1;
-				}  else if (TileWorld[this.position[0]+x][this.position[1]+y][this.position[2]+z+1] === 0 && TileWorld[this.position[0]+x][this.position[1]+y][this.position[2]+z+2] !== 0) {
+				}  else if (World[this.pos[0]+x][this.pos[1]+y][this.pos[2]+z+1] === 0 && World[this.pos[0]+x][this.pos[1]+y][this.pos[2]+z+2] !== 0) {
 					z += 1;
 				}
-				this.position = [this.position[0]+x, this.position[1]+y, this.position[2]+z]
-				this.htmlElement.style['z-index'] = (75 - (this.position[2] - this.position[1] - this.position[0]));
+				this.setLocation(this.pos[0]+x, this.pos[1]+y, this.pos[2]+z);
+			}
 
-
-				var cartOBJ = isoToCart(this.position[0], this.position[1], this.position[2]);
+			var setLocation = function(x,y,z) {
+				this.pos = [x,y,z];
+				this.htmlElement.style['z-index'] = (75 - (this.pos[2] - this.pos[1] - this.pos[0]));
+				var cartOBJ = isoToCart(this.pos[0], this.pos[1], this.pos[2]);
 				var X = targetCenter.x + (cartOBJ.X * gridSize) + 235,
 			    Y = targetCenter.y + (cartOBJ.Y * gridSize) - 962;
 			    
@@ -297,7 +333,7 @@ ISO = (function(){
 			}
 			return {
 				name: name,
-				position: position,
+				pos: pos,
 				facing: 0,
 				setFacing: setFacing,
 				move: move,
@@ -305,13 +341,13 @@ ISO = (function(){
 			}
 		}
 		// draw fcn
-		function Draw(TileWorld) {
+		function Draw(World, startPoint) {
 			var toCheckArray = [], checkedHash = {}, maxX, maxY, maxZ;
-			maxX = TileWorld.length;
-			maxY = TileWorld[0].length;
-			maxZ = TileWorld[0][0].length;
+			maxX = World.length;
+			maxY = World[0].length;
+			maxZ = World[0][0].length;
 
-			toCheckArray.push([0,0,0]);
+			toCheckArray.push(startPoint);
 			checkedHash[0+','+0+','+0] = true;
 			
 			while (toCheckArray.length > 0) {// there are still Coords to check
@@ -319,7 +355,7 @@ ISO = (function(){
 					y = toCheckArray[0][1],
 					z = toCheckArray[0][2];
 					
-				if (TileWorld[x][y][z] === 0) {
+				if (World[x][y][z] === 0) {
 					if (x+1 < maxX && checkedHash[(x+1)+','+y+','+z] !== true) {
 						checkedHash[(x+1)+','+y+','+z] = true;
 						toCheckArray.push([x+1,y,z]);
@@ -332,8 +368,8 @@ ISO = (function(){
 						checkedHash[x+','+y+','+(z+1)] = true;
 						toCheckArray.push([x,y,z+1]);
 					}
-				} else if (TileWorld[x][y][z] instanceof Tile) {
-					TileWorld[x][y][z].render();
+				} else if (World[x][y][z] instanceof Tile) {
+					World.renderBlock(x,y,z);
 					if (x === maxX - 1 || y === maxY - 1) {
 						toCheckArray.push([x,y,z+1]);
 					}
@@ -341,41 +377,182 @@ ISO = (function(){
 				toCheckArray.shift();
 			}
 		}
+		function DrawFromPoint(World, startPoint) {
+			var toCheckArray = [], checkedHash = {}, maxX, maxY, maxZ;
+			maxX = World.length;
+			maxY = World[0].length;
+			maxZ = World[0][0].length;
+
+			toCheckArray.push(startPoint);
+			checkedHash[0+','+0+','+0] = true;
+			
+			while (toCheckArray.length > 0) {// there are still Coords to check
+				var x = toCheckArray[0][0],
+					y = toCheckArray[0][1],
+					z = toCheckArray[0][2];
+					
+				if (World[x][y][z] === 0) {
+					if (x-1 > 0 && checkedHash[(x-1)+','+y+','+z] !== true) {
+						checkedHash[(x-1)+','+y+','+z] = true;
+						toCheckArray.push([x-1,y,z]);
+					}
+					if (y-1 > 0 && checkedHash[x+','+(y-1)+','+z] !== true) {
+						checkedHash[x+','+(y-1)+','+z] = true;
+						toCheckArray.push([x,y-1,z]);
+					}
+					if (z+1 < maxZ && checkedHash[x+','+y+','+(z+1)] !== true) {
+						checkedHash[x+','+y+','+(z+1)] = true;
+						toCheckArray.push([x,y,z+1]);
+					}
+				} else if (World[x][y][z] instanceof Tile && World[x][y][z].rendered === false) {
+					World.renderBlock(x,y,z);
+					if (x === maxX - 1 || y === maxY - 1) {
+						toCheckArray.push([x,y,z+1]);
+					}
+				}
+				toCheckArray.shift();
+			}
+		}
+		// createtileworld
+		function CreateTileWorld(array) {
+			var X = array.length,
+				Y = array[0].length,
+				Z = array[0][0].length;
+
+			var TileWorld = Array3d(X,Y,0);
+
+			var x,y,z;
+			for (x = 0; x < X; x++) {
+				for (y = 0; y < Y; y++) {
+					for (z = 0; z < Z; z++) {
+						switch (array[x][y][z]) {
+							case 0:
+								TileWorld[x][y].push(0);
+								break;
+							case 1:
+								TileWorld[x][y].push(new Tile(1));
+								break;
+						}
+					}
+				}
+			}	
+
+			return TileWorld;
+		}
+		function renderBlock(x,y,z) {
+			if (this[x][y][z] instanceof Tile) {
+
+				this[x][y][z].rendered = true;
+
+				var cartOBJ = isoToCart(x,y,z);
+				var X = targetCenter.x + (cartOBJ.X * gridSize) + 220,
+				    Y = targetCenter.y + (cartOBJ.Y * gridSize) - 950;
+
+				var newTile = this[x][y][z];
+				newTile.img = new Image();
+				newTile.img.src = newTile.imgSrc;
+				newTile.img.className = 'tile';
+				newTile.img.style.left = X.toString() + 'px';
+				newTile.img.style.top = Y.toString() + 'px';
+				newTile.img.style['z-index'] = (75 - (z-y-x));
+
+				target.appendChild(newTile.img);
+				
+			}
+		}
 		return {
 			'GenerateDemoWorld': function() {
-			var IntegerWorld = GenerateDemoWorld(Array3d(32,32,32), {hills: 7})
-			return IntegerWorld;
-			},
-			'CreateTileWorld': function(array) {
-				var X = array.length,
-					Y = array[0].length,
-					Z = array[0][0].length;
+				this.World = CreateTileWorld(GenerateDemoWorld(Array3d(32,32,32), {hills: 7}));
+				this.World.LocalPlayer = {};
+				this.World.RemotePlayers = [];
 
-				var TileWorld = Array3d(X,Y,0);
+				this.World.InitDraw = function() {
+					Draw(this, [0,0,0]);
+				}
+				this.World.redrawFromPoint = function(x,y,z) {
+					DrawFromPoint(this, [x,y,z]);
+				}
+				this.World.addBlock = function(x,y,z) {
+					this[x][y][z] = new Tile(1);
+				}
+				this.World.removeBlock = function(x,y,z) {
+					this[x][y][z].removeElement();
+					this[x][y][z] = 0;
+				}
+				this.World.renderBlock = renderBlock;
+				this.World.createLocalPlayer = function(name, position) {
+					var World = this;
+					this.LocalPlayer = (function(name, position, World) {
 
-				var x,y,z;
-				for (x = 0; x < X; x++) {
-					for (y = 0; y < Y; y++) {
-						for (z = 0; z < Z; z++) {
-							switch (array[x][y][z]) {
+						var cartOBJ = isoToCart(position[0], position[1], position[2]);
+
+						var X = targetCenter.x + (cartOBJ.X * gridSize) + 235,
+						    Y = targetCenter.y + (cartOBJ.Y * gridSize) - 962
+
+						var htmlElement = document.createElement('div');
+						htmlElement.style.backgroundImage = "url('player.png')",
+						htmlElement.className = 'player',
+						htmlElement.style.left = X + 'px',
+						htmlElement.style.top = Y + 'px',
+						htmlElement.style['z-index'] = (75 - (position[2] - position[1] - position[0]));
+
+						target.appendChild(htmlElement);
+						
+						var move = function(x,y,z) {
+							if (World[this.position[0]+x][this.position[1]+y][this.position[2]+z] !== 0 && World[this.position[0]+x][this.position[1]+y][this.position[2]+z-1] === 0) {
+								z -= 1;
+							}  else if (World[this.position[0]+x][this.position[1]+y][this.position[2]+z+1] === 0 && World[this.position[0]+x][this.position[1]+y][this.position[2]+z+2] !== 0) {
+								z += 1;
+							}
+							this.position = [this.position[0]+x, this.position[1]+y, this.position[2]+z]
+							this.htmlElement.style['z-index'] = (75 - (this.position[2] - this.position[1] - this.position[0]));
+
+
+							var cartOBJ = isoToCart(this.position[0], this.position[1], this.position[2]);
+							var X = targetCenter.x + (cartOBJ.X * gridSize) + 235,
+						    Y = targetCenter.y + (cartOBJ.Y * gridSize) - 962;
+						    
+							this.htmlElement.style.left = X + 'px'
+							this.htmlElement.style.top = Y + 'px';
+						}
+
+						var setFacing = function(directionInt) {
+							switch (directionInt) {
 								case 0:
-									TileWorld[x][y].push(0);
+									this.facing = 0;
+									this.htmlElement.style.backgroundPositionX = '50px';
+									this.htmlElement.style.backgroundPositionY = '68px';
 									break;
 								case 1:
-									TileWorld[x][y].push(new Tile('dirt', [x,y,z]));
+									this.facing = 1;
+									this.htmlElement.style.backgroundPositionX = '0px ';
+									this.htmlElement.style.backgroundPositionY = '68px';
+									break;
+								case 2:
+									this.facing = 2;
+									this.htmlElement.style.backgroundPositionX = '50px';
+									this.htmlElement.style.backgroundPositionY = '0px';
+									break;
+								case 3:
+									this.facing = 3;
+									this.htmlElement.style.backgroundPositionX = '0px ';
+									this.htmlElement.style.backgroundPositionY = '0px';
 									break;
 							}
 						}
-					}
-				}	
-
-				return TileWorld;
-			},
-			'InitWorldDraw': function(TileWorld) {
-				Draw(TileWorld);
-				return;
-			},
-			'Player': Player
+						return {
+							name: name,
+							position: position,
+							facing: 0,
+							setFacing: setFacing,
+							move: move,
+							htmlElement: htmlElement
+						}
+					})(name,position,World)
+					return this.LocalPlayer;
+				}
+				return this.World;
+			}
 		}
 	} // end game fcn
 
