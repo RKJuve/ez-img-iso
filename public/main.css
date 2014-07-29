@@ -20,7 +20,7 @@ html, body {
 	left: 0px;
 	bottom: 0px;
 	width: 200px;
-	height: 100px;
+	height: auto;
 	border: 1px black solid;
 	z-index: 777777;
 	background-color: lightgrey;
