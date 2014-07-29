@@ -17,14 +17,13 @@ html, body {
 
 #controls {
 	position: fixed;
-	left: -240px;
-	bottom: -140px;
-	width: 400px;
-	height: 300px;
+	left: 0px;
+	bottom: 0px;
+	width: 200px;
+	height: 100px;
 	border: 1px black solid;
-	border-radius: 100px;
-	background: rgb(23, 23, 77);
 	z-index: 777777;
+	background-color: lightgrey;
 }
 
 #controls i {
