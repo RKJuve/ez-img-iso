@@ -46,7 +46,7 @@ $(document).ready(function(){
   		}
   	}
 
-  	//$scope.Player = Game.createLocalPlayer('Player 1', [25,20,landho]);
+  	$scope.Player = Game.createLocalPlayer('Player 1', [25,20,landho]);
   	// Player Creation
 
   	// Player Controls
