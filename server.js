@@ -7,7 +7,8 @@ var buildDir = './public';
 
 //set up the express app
 var app = express()
-        .use(express.static(buildDir));
+        .use(express.static(buildDir))
+        .use(express.static('./etc'));
 
 // start node server
 var port = process.env.PORT || 3001;

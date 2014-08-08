@@ -9,14 +9,30 @@
 angular.module('controllers', [])
 .controller('MainCtrl', ['$scope', '$document',
   function($scope, $document) {
+
+$(document).ready(function(){
+	//Draw();
+	$("#inner").draggable({ zIndex: 9999 });
+})
   	// Models
   	var Game = ISO.create({
-  		target: 'inner'
+  		target: 'inner',
+  		tiles: {
+  			1: {
+  				type: 'grass',
+  				imgsrc: 'tiletest.png'
+  			},
+  			2: {
+  				type: 'rock',
+  				imgsrc: 'rock.png'
+  			}
+  		}
   	});
+  	window.game = Game;
   	$scope.CoPlayers = [];
   	$scope.World = Game.GenerateDemoWorld();
   	console.log($scope.World)
-  	$scope.World.InitDraw();
+  	Game.initDraw();
 
   	//$scope.TileWorld = Game.CreateTileWorld($scope.IntegerWorld);
   	
@@ -30,7 +46,7 @@ angular.module('controllers', [])
   		}
   	}
 
-  	$scope.Player = $scope.World.createLocalPlayer('Player 1', [25,20,landho], $scope.World);
+  	//$scope.Player = Game.createLocalPlayer('Player 1', [25,20,landho]);
   	// Player Creation
 
   	// Player Controls
@@ -41,38 +57,71 @@ angular.module('controllers', [])
 		// console.log(e);
 		switch (e.which) {
 			case 32:
-				$scope.removeBlock();
+				if (e.shiftKey) {
+					$scope.addBlock();
+				} else {
+					$scope.removeBlock();
+				}
 				break;
 			case 37:
 				if (!e.shiftKey) {
-					$scope.Player.move(1,0,0);
-					
+					$scope.Player.move(1,0,0);	
 				}
-				$scope.Player.setFacing(3);
+				$scope.Player.setFacing(2);
 				break;
 			case 38:
 				if (!e.shiftKey) {
 					$scope.Player.move(0,-1,0);
 					
 				}
-				$scope.Player.setFacing(0);
+				$scope.Player.setFacing(3);
 				break;
 			case 39:
 				if (!e.shiftKey) {
 					$scope.Player.move(-1,0,0);
 					
 				}
-				$scope.Player.setFacing(1);
+				$scope.Player.setFacing(0);
 				break;
 			case 40:
 				if (!e.shiftKey) {
 					$scope.Player.move(0,1,0);
 					
 				}
-				$scope.Player.setFacing(2);
+				$scope.Player.setFacing(1);
 				break;
 		}
 	})
+
+	// remove block
+	$scope.addBlock = function() {
+		var px = $scope.Player.position[0];
+		var py = $scope.Player.position[1];
+		var pz = $scope.Player.position[2];
+
+		switch ($scope.Player.facing) {
+			case 0:
+				if ($scope.World[px-1][py][pz] === 0) {
+					$scope.World.addTile(2, [px-1,py,pz]);
+				}
+				break;
+			case 1:
+				if ($scope.World[px][py+1][pz] === 0) {
+					$scope.World.addTile(2, [px,py+1,pz]);
+				}
+				break;
+			case 2:
+				if ($scope.World[px+1][py][pz] === 0) {
+					$scope.World.addTile(2, [px+1,py,pz]);
+				}
+				break;
+			case 3:
+				if ($scope.World[px][py-1][pz] === 0) {
+					$scope.World.addTile(2, [px,py-1,pz]);
+				}
+				break;
+		}
+	}
 
 	// remove block
 	$scope.removeBlock = function() {
@@ -83,27 +132,27 @@ angular.module('controllers', [])
 
 		switch ($scope.Player.facing) {
 			case 0:
-				if ($scope.World[px][py-1][pz] !== 0) {
-					$scope.World.removeBlock(px,py-1,pz);
-					$scope.World.redrawFromPoint(px,py-1,pz);
+				if ($scope.World[px-1][py][pz] !== 0) {
+					$scope.World.removeTile(px-1,py,pz);
+					Game.redrawFromPoint(px-1,py,pz);
 				}
 				break;
 			case 1:
-				if ($scope.World[px-1][py][pz] !== 0) {
-					$scope.World.removeBlock(px-1,py,pz);
-					$scope.World.redrawFromPoint(px-1,py,pz);
+				if ($scope.World[px][py+1][pz] !== 0) {
+					$scope.World.removeTile(px,py+1,pz);
+					Game.redrawFromPoint(px,py+1,pz);
 				}
 				break;
 			case 2:
-				if ($scope.World[px][py+1][pz] !== 0) {
-					$scope.World.removeBlock(px,py+1,pz);
-					$scope.World.redrawFromPoint(px,py+1,pz);
+				if ($scope.World[px+1][py][pz] !== 0) {
+					$scope.World.removeTile(px+1,py,pz);
+					Game.redrawFromPoint(px+1,py,pz);
 				}
 				break;
 			case 3:
-				if ($scope.World[px+1][py][pz] !== 0) {
-					$scope.World.removeBlock(px+1,py,pz);
-					$scope.World.redrawFromPoint(px+1,py,pz);
+				if ($scope.World[px][py-1][pz] !== 0) {
+					$scope.World.removeTile(px,py-1,pz);
+					Game.redrawFromPoint(px,py-1,pz);
 				}
 				break;
 		}
