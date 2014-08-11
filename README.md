@@ -1,7 +1,5 @@
 ez-img-iso
 =============
-
-trying img tags instead of canvas.
 ![v0.0.2](/etc/v0.0.2.png)
 
 1. ```git clone https://github.com/RKJuve/ez-canvas-iso.git```
@@ -12,7 +10,8 @@ trying img tags instead of canvas.
 ### Usage:
 
 #### Initialize Game object
-```var Game = ISO.create({
+```
+var Game = ISO.create({
   		target: 'inner',
   		tiles: {
   			1: {
@@ -24,7 +23,8 @@ trying img tags instead of canvas.
   				imgsrc: 'rock.png'
   			}
   		}
-  	});```
+  	});
+```
 
 
 ### TODO:
