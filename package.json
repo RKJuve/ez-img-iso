@@ -1,14 +1,15 @@
 {
-  "name": "ez-canvas-iso",
-  "version": "0.0.0",
-  "description": "isomorphic display engine using native canvas",
+  "name": "ez-img-iso",
+  "version": "0.0.2",
+  "description": "browser native isomorphic display engine",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./server.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/RKJuve/ez-canvas-iso.git"
+    "url": "https://github.com/RKJuve/ez-img-iso.git"
   },
   "keywords": [
     "isomorphic",
@@ -19,7 +20,7 @@
   "author": "Ryan Juve",
   "license": "BSD-2-Clause",
   "bugs": {
-    "url": "https://github.com/RKJuve/ez-canvas-iso/issues"
+    "url": "https://github.com/RKJuve/ez-img-iso/issues"
   },
   "dependencies": {
     "express": "~4.0.0",
