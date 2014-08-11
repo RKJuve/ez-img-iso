@@ -46,8 +46,23 @@ $(document).ready(function(){
   		}
   	}
 
-  	$scope.Player = Game.createLocalPlayer('Player 1', [25,20,landho]);
+  	//world rotation ctrls
+  	$scope.rotateWorld = function(changeInt) {
+  		var curViewDir = Game.getViewDir();
+
+  		var newViewDir = curViewDir + changeInt;
+
+  		if (newViewDir === -1) {
+  			newViewDir = 3;
+  		} else if (newViewDir === 4) {
+  			newViewDir = 0;
+  		}
+
+  		Game.setViewDir(newViewDir);
+  	}
+
   	// Player Creation
+  	$scope.Player = Game.createLocalPlayer('Player 1', [25,20,landho]);
 
   	// Player Controls
 

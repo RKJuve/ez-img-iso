@@ -1,83 +1,10 @@
-/*
-
-sizeof.js
-
-A function to calculate the approximate memory usage of objects
-
-Created by Stephen Morley - http://code.stephenmorley.org/ - and released under
-the terms of the CC0 1.0 Universal legal code:
-
-http://creativecommons.org/publicdomain/zero/1.0/legalcode
-
-*/
-
-/* Returns the approximate memory usage, in bytes, of the specified object. The
- * parameter is:
- *
- * object - the object whose size should be determined
- */
-function sizeof(object){
-
-  // initialise the list of objects and size
-  var objects = [object];
-  var size    = 0;
-
-  // loop over the objects
-  for (var index = 0; index < objects.length; index ++){
-
-    // determine the type of the object
-    switch (typeof objects[index]){
-
-      // the object is a boolean
-      case 'boolean': size += 4; break;
-
-      // the object is a number
-      case 'number': size += 8; break;
-
-      // the object is a string
-      case 'string': size += 2 * objects[index].length; break;
-
-      // the object is a generic object
-      case 'object':
-
-        // if the object is not an array, add the sizes of the keys
-        if (Object.prototype.toString.call(objects[index]) != '[object Array]'){
-          for (var key in objects[index]) size += 2 * key.length;
-        }
-
-        // loop over the keys
-        for (var key in objects[index]){
-
-          // determine whether the value has already been processed
-          var processed = false;
-          for (var search = 0; search < objects.length; search ++){
-            if (objects[search] === objects[index][key]){
-              processed = true;
-              break;
-            }
-          }
-
-          // queue the value to be processed if appropriate
-          if (!processed) objects.push(objects[index][key]);
-
-        }
-
-    }
-
-  }
-
-  // return the calculated size
-  return size;
-
-}
-
 
 
 // ez-img-iso.js
 // a simple isometric graphics engine
 // April 2014 - Ryan Juve
-
 // namespace/module
+
 
 ISO = (function(){
 	function Game(opts) {
@@ -282,19 +209,26 @@ ISO = (function(){
 			this.position = position;
 			this.facing = 0;
 
-			var cartOBJ = isoToCart(position[0], position[1], position[2]);
+			this.renderElement = function() {
+				var cartOBJ = isoToCart.call(world, position[0], position[1], position[2], viewDir);
 
-			var X = targetCenter.x + (cartOBJ.X * gridSize) + 235,
-			    Y = targetCenter.y + (cartOBJ.Y * gridSize) - 962
+				var X = targetCenter.x + (cartOBJ.X * gridSize) + 235,
+				    Y = targetCenter.y + (cartOBJ.Y * gridSize) - 962;
 
-			this.htmlElement = document.createElement('div');
-			this.htmlElement.style.backgroundImage = "url('player.png')",
-			this.htmlElement.className = 'player',
-			this.htmlElement.style.left = X + 'px',
-			this.htmlElement.style.top = Y + 'px',
-			this.htmlElement.style['z-index'] = (75 - (position[2] - position[1] - position[0]));
+				this.htmlElement = document.createElement('div');
+				this.htmlElement.style.backgroundImage = "url('player.png')",
+				this.htmlElement.className = 'player',
+				this.htmlElement.style.left = X + 'px',
+				this.htmlElement.style.top = Y + 'px',
+				this.htmlElement.style['z-index'] = (75 - (position[2] - position[1] - position[0]));
 
-			target.appendChild(this.htmlElement);
+				target.appendChild(this.htmlElement);
+
+			}
+
+			this.removeElement = function() {
+				target.removeChild(this.htmlElement);
+			}
 
 			this.setFacing = function(directionInt) {
 				switch (directionInt) {
@@ -331,7 +265,7 @@ ISO = (function(){
 				this.htmlElement.style['z-index'] = (75 - (this.position[2] - this.position[1] - this.position[0]));
 
 
-				var cartOBJ = isoToCart(this.position[0], this.position[1], this.position[2]);
+				var cartOBJ = isoToCart.call(world, this.position[0], this.position[1], this.position[2], viewDir);
 				var X = targetCenter.x + (cartOBJ.X * gridSize) + 235,
 			    Y = targetCenter.y + (cartOBJ.Y * gridSize) - 962;
 			    
@@ -559,12 +493,15 @@ ISO = (function(){
 			},
 			'setViewDir': function(newDir) {
 				this.world.clearRenderedElements();
+				this.localPlayer.removeElement();
 				viewDir = newDir;
 				Draw(this.world, [0,0,0]);
+				this.localPlayer.renderElement();
 				return viewDir;
 			},
 			'createLocalPlayer': function(name, position) {
 				this.localPlayer = new Player(name, position, this.world);
+				this.localPlayer.renderElement();
 				this.localPlayer.setFacing(1);
 				return this.localPlayer;
 			},
@@ -575,7 +512,7 @@ ISO = (function(){
 				DrawFromPoint(this.world, [x,y,z]);
 			},
 			'GenerateDemoWorld': function() {
-				this.world = new TileWorld(GenerateDemoWorld(Array3d(32,32,32), {hills: 7}));
+				this.world = new TileWorld(GenerateDemoWorld(Array3d(28,28,28), {hills: 7}));
 				return this.world;
 			}
 		}

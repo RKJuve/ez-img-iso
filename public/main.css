@@ -15,6 +15,54 @@ html, body {
 	width: 150px;
 }
 
+#rotateCtrl {
+	position: absolute;
+	top: -52px;
+	left: -1px;
+	border: 1px black solid;
+	background-color: lightgrey;
+	z-index: 777777;
+	
+	width: 100px;
+	height: 50px;
+
+	text-align: center;
+}
+
+#rotateCtrl i {
+	font-size: 32px;
+	margin: -5px 5px 0px;
+	transform: rotate(-60deg) scale(1, -1);
+}
+
+#rotateCtrl i:hover {
+	position: relative;
+	bottom: 2px;
+	color: red;
+}
+
+#rotateCtrl i:first-of-type {
+	transform: rotate(-120deg);
+}
+
+#rotateCtrl p {
+	margin: 1px;
+	text-align: center;
+}
+
+#disclaimer {
+	position: fixed;
+	bottom: 0px;
+	left: 201px;
+	border: 1px black solid;
+	background-color: rgba(255, 69, 0, 0.9);
+	z-index: 777777;
+}
+
+#disclaimer p {
+	margin: 3px;
+}
+
 #controls {
 	position: fixed;
 	left: 0px;
