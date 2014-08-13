@@ -220,7 +220,7 @@ ISO = (function(){
 				this.htmlElement.className = 'player',
 				this.htmlElement.style.left = X + 'px',
 				this.htmlElement.style.top = Y + 'px',
-				this.htmlElement.style['z-index'] = (75 - (position[2] - position[1] - position[0]));
+				this.htmlElement.style.zIndex = (75 - (position[2] - position[1] - position[0]));
 
 				target.appendChild(this.htmlElement);
 
@@ -454,7 +454,7 @@ ISO = (function(){
 				tile.img.style.left = X.toString() + 'px';
 				tile.img.style.top = Y.toString() + 'px';
 
-				tile.img.style['z-index'] = zIndex;
+				tile.img.style.zIndex = zIndex;
 				tile.img.style['-webkit-filter'] = 'brightness('+((90 - ((z*3)-y-x))/90)+')'
 
 				target.appendChild(tile.img);
