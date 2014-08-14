@@ -62,7 +62,10 @@ $(document).ready(function(){
   	}
 
   	// Player Creation
-  	$scope.Player = Game.createLocalPlayer('Player 1', [25,20,landho]);
+  	$scope.Player = Game.createLocalPlayer({
+  		name: 'Player 1',
+  		position: [25,20,landho]
+  	});
 
   	// Player Controls
 

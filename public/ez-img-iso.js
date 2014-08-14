@@ -69,6 +69,25 @@ ISO = (function(){
 			var Y = (x/2) + (y/2) + (z/2);
 			return { X: X, Y: Y};
 		}
+		// returns a z-index for an element based on its x,y,z position and
+		// the current view direction
+		function gameZ(x,y,z) {
+			switch (viewDir) {
+				case 0:
+					var zIndex = (200 - (z-y-x)*2);
+					break;
+				case 1:
+					var zIndex = (200 - (z-y+x)*2);
+					break;
+				case 2:
+					var zIndex = (200 - (z+y+x)*2);
+					break;
+				case 3:
+					var zIndex = (200 - (z+y-x)*2);
+					break;
+			}
+			return zIndex;
+		}
 		// helper function to create 3d arrays of zeroes
 		function Array3d(x,y,z) {
 			var temp = [];
@@ -83,11 +102,7 @@ ISO = (function(){
 		 	for (i = 0; i < x; i++) {
 				for (j = 0; j < y; j++) {
 					for (k = 0; k < z; k++) {
-						if (k === z-1) {
-							temp[i][j].push(1);
-						} else {
-							temp[i][j].push(0);	
-						}
+						temp[i][j].push(0);	
 					}
 				}			
 			}
@@ -122,9 +137,32 @@ ISO = (function(){
 								    newY = Math.max(0,Math.min(y-1,apex.y+j)),
 								    newZ = Math.max(0,Math.min(z,i));
 							    
-							    if (array[newX][newY][newZ] === 0) {
-							    	array[newX][newY][newZ] = 1;
-							    }
+							    array[newX][newY][newZ] = 1;
+
+							}
+						}
+					}
+				}
+			}
+
+			function addRock(depth, jitter, randWeight) {
+				for (var i = 0; i < x; i++) {
+					for (var j = 0; j < y; j++) {
+						var counter = (Math.random() - 1) * jitter;
+						var trigger = false;
+						for (var k = 0; k < z; k++) {
+							if (trigger) {
+								array[i][j][k] = 2;
+								continue;
+							}
+							if (array[i][j][k] === 1) {
+								counter++;
+								if (counter > depth) {
+									trigger = true;
+								}
+								if ( (Math.random() * counter) > randWeight ) {
+									array[i][j][k] = 2;
+								}
 							}
 						}
 					}
@@ -133,15 +171,20 @@ ISO = (function(){
 
 
 			genHill(opts.hills);
+			addRock(7, 3, 1.1);
 
 			return array;
 		}
 		//
 		function getTileImgSrc(tileNum) {
-			return TileHash[tileNum].imgsrc;
+			if (TileHash[tileNum]) {
+				return TileHash[tileNum].imgsrc;
+			}
 		};
 		function getTileType(tileNum) {
-			return TileHash[tileNum].type;
+			if (TileHash[tileNum]) {
+				return TileHash[tileNum].type;
+			}
 		};
 		// Tile object factory
 		function Tile(tileNum) {
@@ -204,23 +247,26 @@ ISO = (function(){
 		}
 		// Returns a Player object with a given name and position
 
-		function Player(name, position, world) {
-			this.name = name;
-			this.position = position;
-			this.facing = 0;
+		function Player(opts, world) {
+			this.name = opts.name || 'New Player';
+			this.position = opts.position;
+			this.facing = opts.facing || 0;
+
+			this.frontImageUrl = opts.frontImageUrl;
+			this.backImageUrl = opts.backImageUrl;
 
 			this.renderElement = function() {
-				var cartOBJ = isoToCart.call(world, position[0], position[1], position[2], viewDir);
+				var cartOBJ = isoToCart.call(world, this.position[0], this.position[1], this.position[2], viewDir);
 
 				var X = targetCenter.x + (cartOBJ.X * gridSize) + 235,
 				    Y = targetCenter.y + (cartOBJ.Y * gridSize) - 962;
 
 				this.htmlElement = document.createElement('div');
-				this.htmlElement.style.backgroundImage = "url('player.png')",
+				this.htmlElement.style.backgroundImage = 'url(player.png)',
 				this.htmlElement.className = 'player',
 				this.htmlElement.style.left = X + 'px',
 				this.htmlElement.style.top = Y + 'px',
-				this.htmlElement.style.zIndex = (75 - (position[2] - position[1] - position[0]));
+				this.htmlElement.style.zIndex = gameZ(this.position[0], this.position[1], this.position[2]) + 1;
 
 				target.appendChild(this.htmlElement);
 
@@ -234,23 +280,19 @@ ISO = (function(){
 				switch (directionInt) {
 					case 0:
 						this.facing = 0;
-						this.htmlElement.style.backgroundPositionX = '0px';
-						this.htmlElement.style.backgroundPositionY = '68px';
+						this.htmlElement.style.backgroundPosition = '0px 68px';
 						break;
 					case 1:
 						this.facing = 1;
-						this.htmlElement.style.backgroundPositionX = '50px';
-						this.htmlElement.style.backgroundPositionY = '0px';
+						this.htmlElement.style.backgroundPosition = '50px 0px';
 						break;
 					case 2:
 						this.facing = 2;
-						this.htmlElement.style.backgroundPositionX = '0px';
-						this.htmlElement.style.backgroundPositionY = '0px';
+						this.htmlElement.style.backgroundPosition = '0px 0px';
 						break;
 					case 3:
 						this.facing = 3;
-						this.htmlElement.style.backgroundPositionX = '50px';
-						this.htmlElement.style.backgroundPositionY = '68px';
+						this.htmlElement.style.backgroundPosition = '50px 68px';
 						break;
 				}
 			}
@@ -262,7 +304,7 @@ ISO = (function(){
 					z += 1;
 				}
 				this.position = [this.position[0]+x, this.position[1]+y, this.position[2]+z]
-				this.htmlElement.style['z-index'] = (75 - (this.position[2] - this.position[1] - this.position[0]));
+				this.htmlElement.style.zIndex = gameZ(this.position[0], this.position[1], this.position[2]) + 1;
 
 
 				var cartOBJ = isoToCart.call(world, this.position[0], this.position[1], this.position[2], viewDir);
@@ -395,8 +437,8 @@ ISO = (function(){
 							case 0:
 								this[x][y].push(0);
 								break;
-							case 1:
-								this[x][y].push(new Tile(1));
+							default:
+								this[x][y].push(new Tile(array[x][y][z]));
 								break;
 						}
 					}
@@ -426,22 +468,9 @@ ISO = (function(){
 				console.log('----tried to remove a non Tile----');
 			}
 		};
+
 		TileWorld.prototype.renderTile = function(x,y,z) {
 			if (this[x][y][z] instanceof Tile && this[x][y][z].rendered === false ) {
-				switch (viewDir) {
-					case 0:
-						var zIndex = (75 - (z-y-x));
-						break;
-					case 1:
-						var zIndex = (75 - (z-y+x));
-						break;
-					case 2:
-						var zIndex = (75 - (z+y+x));
-						break;
-					case 3:
-						var zIndex = (75 - (z+y-x));
-						break;
-				}
 
 				var cartOBJ = isoToCart.call(this,x,y,z, viewDir);
 				var X = targetCenter.x + (cartOBJ.X * gridSize) + 220,
@@ -454,7 +483,7 @@ ISO = (function(){
 				tile.img.style.left = X.toString() + 'px';
 				tile.img.style.top = Y.toString() + 'px';
 
-				tile.img.style.zIndex = zIndex;
+				tile.img.style.zIndex = gameZ(x,y,z);
 				tile.img.style['-webkit-filter'] = 'brightness('+((90 - ((z*3)-y-x))/90)+')'
 
 				target.appendChild(tile.img);
@@ -499,8 +528,8 @@ ISO = (function(){
 				this.localPlayer.renderElement();
 				return viewDir;
 			},
-			'createLocalPlayer': function(name, position) {
-				this.localPlayer = new Player(name, position, this.world);
+			'createLocalPlayer': function(opts) {
+				this.localPlayer = new Player(opts, this.world);
 				this.localPlayer.renderElement();
 				this.localPlayer.setFacing(1);
 				return this.localPlayer;
