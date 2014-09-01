@@ -17,7 +17,7 @@
 10 error You can get their info via:
 10 error     npm owner ls ez-img-iso
 10 error There is likely additional logging output above.
-11 error System Linux 3.13.0-32-generic
+11 error System Linux 3.13.0-34-generic
 12 error command "node" "/usr/local/bin/npm" "start"
 13 error cwd /home/juve/ez-img-iso
 14 error node -v v0.10.21

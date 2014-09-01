@@ -10,11 +10,10 @@ angular.module('controllers', [])
 .controller('MainCtrl', ['$scope', '$document',
   function($scope, $document) {
 
-$(document).ready(function(){
-	//Draw();
+
 	$("#inner").draggable({ zIndex: 9999 });
-})
-  	// Models
+
+
   	var Game = ISO.create({
   		target: 'inner',
   		tiles: {
@@ -74,39 +73,46 @@ $(document).ready(function(){
 		//console.log($scope.Player);
 		// console.log(e);
 		switch (e.which) {
-			case 32:
-				if (e.shiftKey) {
-					$scope.addBlock();
-				} else {
-					$scope.removeBlock();
-				}
+			case 78:
+				$scope.removeBlock();
+				break;
+			case 77:
+				$scope.addBlock();
 				break;
 			case 37:
+			var direction = ((2 + Game.getViewDir()*3) % 4);
 				if (!e.shiftKey) {
-					$scope.Player.move(1,0,0);	
+					$scope.Player.move(direction);	
 				}
-				$scope.Player.setFacing(2);
+				$scope.Player.setFacing(direction);
+				$scope.Player.updateElement();
 				break;
 			case 38:
+			var direction = ((3 + Game.getViewDir()*3) % 4);
 				if (!e.shiftKey) {
-					$scope.Player.move(0,-1,0);
+					$scope.Player.move(direction);
 					
 				}
-				$scope.Player.setFacing(3);
+				$scope.Player.setFacing(direction);
+				$scope.Player.updateElement();
 				break;
 			case 39:
+			var direction = ((0 + Game.getViewDir()*3) % 4);
 				if (!e.shiftKey) {
-					$scope.Player.move(-1,0,0);
+					$scope.Player.move(direction);
 					
 				}
-				$scope.Player.setFacing(0);
+				$scope.Player.setFacing(direction);
+				$scope.Player.updateElement();
 				break;
 			case 40:
+			var direction = ((1 + Game.getViewDir()*3) % 4);
 				if (!e.shiftKey) {
-					$scope.Player.move(0,1,0);
+					$scope.Player.move(direction);
 					
 				}
-				$scope.Player.setFacing(1);
+				$scope.Player.setFacing(direction);
+				$scope.Player.updateElement();
 				break;
 		}
 	})

@@ -15,18 +15,21 @@ ISO = (function(){
 			tileHeight: 1,  // height of tiles in grid units
 			tiles: {		// tile type object
 				1: {
-  				type: 'grass',
-  				imgsrc: 'etc/tiletest.png'
+	  				type: 'grass',
+	  				imgsrc: 'etc/tiletest.png',
+
 	  			},
 	  			2: {
 	  				type: 'rock',
-	  				imgsrc: 'etc/rock.png'
+	  				imgsrc: 'etc/rock.png',
+
 	  			}
 			}
 		  }
 		*/
 
-		// assign Game  Globals
+
+		//params/globals/private vars/split by function?
 		var target = document.getElementById(opts.target);
 		var gridSize = opts.gridSize || 40;
 
@@ -36,11 +39,15 @@ ISO = (function(){
 		targetCenter.x = target.offsetWidth / 2;
 		targetCenter.y = target.offsetHeight / 2;
 
+		//private game variables
+
+		var viewDir = 0;
+
 		// translates 3d array coordinates into xy cartesian coordinates,
 		// takes into account a given view rotation
 		// thisArg must be TileWorld
-		function isoToCart(x, y, z, viewRot) {
-			switch (viewRot) {
+		function isoToCart(x, y, z) {
+			switch (viewDir) {
 				case 0:
 					break;
 				case 1:
@@ -124,7 +131,7 @@ ISO = (function(){
 					var apex = {};
 						apex.x = Math.floor( Math.random() * x ),
 						apex.y = Math.floor( Math.random() * y ),
-						apex.z = Math.ceil( Math.random() * z/2 );
+						apex.z = Math.ceil( Math.random() * (z/2) + 1 );
 					// console.log(apex);
 					
 					for (var i = apex.z; i < z; i += 1) {
@@ -175,7 +182,61 @@ ISO = (function(){
 
 			return array;
 		}
-		//
+		function GenerateForest(world, entities, numTrees) {
+			var i = 0;
+
+			var X = world.length;
+			var Y = world[0].length;
+			var Z = world[0][0].length;
+
+			while (i < numTrees) {
+
+				var x = Math.floor(Math.random() * X);
+				var y = Math.floor(Math.random() * Y);
+
+				for (var z = 0; z < Z; z++) {
+					if (world[x][y][z] instanceof Tile) {
+						entities.push(new Tree(x,y,z-1));
+						break;
+					}
+				}
+
+				i++;
+			}
+		}
+
+		function Tree(x,y,z) {
+
+			this.position = [x,y,z];
+
+			this.imgSrc = 'tree.png';
+
+			this.rendered = false;
+
+			this.renderImage = function() {
+				var cartOBJ = isoToCart(this.position[0],this.position[1],this.position[2]);
+				var X = targetCenter.x + (cartOBJ.X * gridSize) + 232,
+				    Y = targetCenter.y + (cartOBJ.Y * gridSize) - 985;
+
+				this.img = new Image();
+				this.img.src = this.imgSrc;
+				this.img.className = 'tree';
+				this.img.style.left = X.toString() + 'px';
+				this.img.style.top = Y.toString() + 'px';
+
+				this.img.style.zIndex = gameZ(this.position[0],this.position[1],this.position[2]);
+				this.img.style['-webkit-filter'] = 'brightness('+((90 - ((this.position[2]*3)-this.position[1]-this.position[0]))/90)+')'
+
+				target.appendChild(this.img);
+				
+				this.rendered = true;
+			}
+
+
+			return this;
+		}
+
+		// tile helper functions
 		function getTileImgSrc(tileNum) {
 			if (TileHash[tileNum]) {
 				return TileHash[tileNum].imgsrc;
@@ -252,71 +313,154 @@ ISO = (function(){
 			this.position = opts.position;
 			this.facing = opts.facing || 0;
 
+			this.world = world;
+
 			this.frontImageUrl = opts.frontImageUrl;
 			this.backImageUrl = opts.backImageUrl;
 
-			this.renderElement = function() {
-				var cartOBJ = isoToCart.call(world, this.position[0], this.position[1], this.position[2], viewDir);
-
-				var X = targetCenter.x + (cartOBJ.X * gridSize) + 235,
-				    Y = targetCenter.y + (cartOBJ.Y * gridSize) - 962;
-
-				this.htmlElement = document.createElement('div');
-				this.htmlElement.style.backgroundImage = 'url(player.png)',
-				this.htmlElement.className = 'player',
-				this.htmlElement.style.left = X + 'px',
-				this.htmlElement.style.top = Y + 'px',
-				this.htmlElement.style.zIndex = gameZ(this.position[0], this.position[1], this.position[2]) + 1;
-
-				target.appendChild(this.htmlElement);
-
-			}
-
-			this.removeElement = function() {
-				target.removeChild(this.htmlElement);
-			}
-
-			this.setFacing = function(directionInt) {
-				switch (directionInt) {
-					case 0:
-						this.facing = 0;
-						this.htmlElement.style.backgroundPosition = '0px 68px';
-						break;
-					case 1:
-						this.facing = 1;
-						this.htmlElement.style.backgroundPosition = '50px 0px';
-						break;
-					case 2:
-						this.facing = 2;
-						this.htmlElement.style.backgroundPosition = '0px 0px';
-						break;
-					case 3:
-						this.facing = 3;
-						this.htmlElement.style.backgroundPosition = '50px 68px';
-						break;
-				}
-			}
-			
-			this.move = function(x,y,z) {
-				if (world[this.position[0]+x][this.position[1]+y][this.position[2]+z] !== 0 && world[this.position[0]+x][this.position[1]+y][this.position[2]+z-1] === 0) {
-					z -= 1;
-				}  else if (world[this.position[0]+x][this.position[1]+y][this.position[2]+z+1] === 0 && world[this.position[0]+x][this.position[1]+y][this.position[2]+z+2] !== 0) {
-					z += 1;
-				}
-				this.position = [this.position[0]+x, this.position[1]+y, this.position[2]+z]
-				this.htmlElement.style.zIndex = gameZ(this.position[0], this.position[1], this.position[2]) + 1;
-
-
-				var cartOBJ = isoToCart.call(world, this.position[0], this.position[1], this.position[2], viewDir);
-				var X = targetCenter.x + (cartOBJ.X * gridSize) + 235,
-			    Y = targetCenter.y + (cartOBJ.Y * gridSize) - 962;
-			    
-				this.htmlElement.style.left = X + 'px'
-				this.htmlElement.style.top = Y + 'px';
-			}
-
 			return this;
 		}
+
+		Player.prototype.renderElement = function() {
+			var cartOBJ = isoToCart.call(this.world, this.position[0], this.position[1], this.position[2]);
+
+			var X = targetCenter.x + (cartOBJ.X * gridSize) + 240,
+			    Y = targetCenter.y + (cartOBJ.Y * gridSize) - 955;
+
+			this.htmlElement = document.createElement('div');
+			this.htmlElement.style.backgroundImage = 'url(player.png)',
+			this.htmlElement.className = 'player',
+			this.htmlElement.style.left = X + 'px',
+			this.htmlElement.style.top = Y + 'px',
+			this.htmlElement.style.zIndex = gameZ(this.position[0], this.position[1], this.position[2]) + 1;
+
+			//facing
+			switch ( (this.facing + viewDir) % 4 ) {
+				case 0:
+					this.htmlElement.style.backgroundPosition = '0px 54px';
+					break;
+				case 1:
+					this.htmlElement.style.backgroundPosition = '40px 0px';
+					break;
+				case 2:
+					this.htmlElement.style.backgroundPosition = '0px 0px';
+					break;
+				case 3:
+					this.htmlElement.style.backgroundPosition = '40px 54px';
+					break;
+			}
+
+			target.appendChild(this.htmlElement);
+		};
+
+		Player.prototype.updateElement = function() {
+			var cartOBJ = isoToCart.call(this.world, this.position[0], this.position[1], this.position[2]);
+
+			var X = targetCenter.x + (cartOBJ.X * gridSize) + 240,
+			    Y = targetCenter.y + (cartOBJ.Y * gridSize) - 955;
+
+			this.htmlElement.style.left = X + 'px',
+			this.htmlElement.style.top = Y + 'px',
+			this.htmlElement.style.zIndex = gameZ(this.position[0], this.position[1], this.position[2]) + 1;
+
+			//facing
+			switch ( (this.facing + viewDir) % 4 ) {
+				case 0:
+					this.htmlElement.style.backgroundPosition = '0px 54px';
+					break;
+				case 1:
+					this.htmlElement.style.backgroundPosition = '40px 0px';
+					break;
+				case 2:
+					this.htmlElement.style.backgroundPosition = '0px 0px';
+					break;
+				case 3:
+					this.htmlElement.style.backgroundPosition = '40px 54px';
+					break;
+			}
+		};
+
+		Player.prototype.removeElement = function() {
+			target.removeChild(this.htmlElement);
+		};
+
+		Player.prototype.setFacing = function(direction) {
+			console.log(direction);
+			this.facing = direction;
+		};
+
+		Player.prototype.moveNotPossible = function() {
+			console.log('noooop');
+		};
+
+		Player.prototype.fall = function() {
+			var falling = true;
+			while (falling) {
+				if (this.world[this.position[0]][this.position[1]][this.position[2]+1] !== 0) {
+					falling = false;
+				} else {
+					this.jumpTo(this.position[0],this.position[1],this.position[2]+1);
+				}
+			}
+		};
+
+		Player.prototype.move = function(direction) {
+			console.log(direction);
+
+			switch (direction) {
+				case 0:
+					var newPos = [this.position[0]-1,this.position[1],this.position[2]];
+					break;
+				case 1:
+					var newPos = [this.position[0],this.position[1]+1,this.position[2]];
+					break;
+				case 2:
+					var newPos = [this.position[0]+1,this.position[1],this.position[2]];
+					break;
+				case 3:
+					var newPos = [this.position[0],this.position[1]-1,this.position[2]];
+					break;
+			}
+
+			////if possible
+			//if position doesnt exist in world
+			if (this.world[newPos[0]][newPos[1]][newPos[2]] === undefined) {
+				this.moveNotPossible();
+				return;
+			}
+			//if spot is blocked
+			if (this.world[newPos[0]][newPos[1]][newPos[2]-1] !== 0) {
+				this.moveNotPossible();
+				return;
+			}
+			////if climb
+			if (this.world[newPos[0]][newPos[1]][newPos[2]] !== 0 && this.world[newPos[0]][newPos[1]][newPos[2]-1] === 0 && this.world[newPos[0]][newPos[1]][newPos[2]-2] === 0) {
+				this.jumpTo(newPos[0],newPos[1],newPos[2]-1);
+				return;
+			}
+			////if flat move
+			this.jumpTo(newPos[0],newPos[1],newPos[2]);
+			////if fall
+			if (this.world[newPos[0]][newPos[1]][newPos[2]+1] === 0) {
+				this.fall();
+			}
+			return;
+		};
+
+		Player.prototype.jumpTo = function(x,y,z) {
+			this.position = [x,y,z];
+			this.updateElement();
+
+		};
+
+		Player.prototype.relativeFacing = function() {
+
+		};
+
+
+
+
+
 		// draw fcn
 		function Draw(World, startPoint) {
 			var toCheckArray = [], checkedHash = {}, maxX, maxY, maxZ;
@@ -472,7 +616,7 @@ ISO = (function(){
 		TileWorld.prototype.renderTile = function(x,y,z) {
 			if (this[x][y][z] instanceof Tile && this[x][y][z].rendered === false ) {
 
-				var cartOBJ = isoToCart.call(this,x,y,z, viewDir);
+				var cartOBJ = isoToCart.call(this,x,y,z);
 				var X = targetCenter.x + (cartOBJ.X * gridSize) + 220,
 				    Y = targetCenter.y + (cartOBJ.Y * gridSize) - 950;
 
@@ -503,7 +647,7 @@ ISO = (function(){
 			for (x = 0; x < X; x++) {
 				for (y = 0; y < Y; y++) {
 					for (z = 0; z < Z; z++) {
-						if (this[x][y][z].rendered === true) {
+						if (this[x][y][z] && this[x][y][z].rendered === true) {
 							this[x][y][z].removeElement();
 						}
 					}
@@ -511,10 +655,9 @@ ISO = (function(){
 			}
 		}
 
-		var viewDir = 0;
-
 		return {
 			'world': [],
+			'entities': [],
 			'localPlayer': {},
 			'remotePlayers': [],
 			'getViewDir': function() {
@@ -530,18 +673,23 @@ ISO = (function(){
 			},
 			'createLocalPlayer': function(opts) {
 				this.localPlayer = new Player(opts, this.world);
-				this.localPlayer.renderElement();
 				this.localPlayer.setFacing(1);
+				this.localPlayer.renderElement();
 				return this.localPlayer;
 			},
 			'initDraw': function() {
 				Draw(this.world, [0,0,0]);
+				this.entities.forEach(function(el) {
+					el.renderImage();
+				})
 			},
 			'redrawFromPoint': function(x,y,z) {
 				DrawFromPoint(this.world, [x,y,z]);
 			},
 			'GenerateDemoWorld': function() {
-				this.world = new TileWorld(GenerateDemoWorld(Array3d(28,28,28), {hills: 7}));
+				this.world = new TileWorld(GenerateDemoWorld(Array3d(28,28,18), {hills: 7}));
+				GenerateForest(this.world, this.entities, 77);
+
 				return this.world;
 			}
 		}
