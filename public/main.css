@@ -185,6 +185,42 @@ html, body {
 	text-align: center;
 }
 
+.playerSay {
+	position: absolute;
+	width: 200px;
+	left: 50%;
+	bottom: 62px;
+	margin-left: -100px;
+	padding: 5px;
+
+	background: rgba(244, 244, 244, 0.71);
+	border-radius: 4px;
+
+	opacity: 0;
+
+	-webkit-transition: opacity 0.25s ease-in;
+    -moz-transition: opacity 0.25s ease-in;
+    -o-transition: opacity 0.25s ease-in;
+    transition: opacity 0.25s ease-in;
+}
+
+/* creates triangle */
+.playerSay:after {
+  content: "";
+  display: block; /* reduce the damage in FF3.0 */
+  position: absolute;
+  bottom: -5px;
+  left: 95px;
+  width: 0;
+  border-width: 5px 5px 0;
+  border-style: solid;
+  border-color: rgba(244, 244, 244, 0.71) transparent;
+}
+
+.playerSay.show {
+	opacity: 1;
+}
+
 body {
 	background-color: darkslategray;
 }

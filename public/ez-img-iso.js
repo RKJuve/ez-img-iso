@@ -323,6 +323,27 @@ ISO = (function(){
 			return this;
 		}
 
+		Player.prototype.say = function(words) {
+			var div = document.createElement('div');
+			div.className = 'playerSay';
+			div.innerHTML = words;
+
+			this.htmlElement.appendChild(div);
+
+			setTimeout(function(){
+				div.className = 'playerSay show';
+			}, 0);
+
+			setTimeout(function(){
+				div.className = 'playerSay';
+			}, (3000+(words.length*25)) );
+
+			var _this = this;
+			setTimeout(function(){
+				_this.htmlElement.removeChild(div)
+			}, (3250+(words.length*25)) );
+		}
+
 		Player.prototype.info = function() {
 			return {
 				name: this.name,
@@ -583,10 +604,6 @@ ISO = (function(){
 			var X = array.length,
 				Y = array[0].length,
 				Z = array[0][0].length;
-
-			console.log(this);
-
-			//var TileWorld = Array3d(X,Y,0);
 
 			var x,y,z;
 			for (x = 0; x < X; x++) {

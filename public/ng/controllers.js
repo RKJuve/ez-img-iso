@@ -33,7 +33,6 @@ angular.module('controllers', [])
   		Game.initDraw();
 
   		$.get('/api/players', function(data) {
-  			console.log('----players----', data);
   			var keys = Object.keys(data);
   			var len = keys.length;
   			var i = 0;
@@ -69,7 +68,6 @@ angular.module('controllers', [])
   		})
 
   		socket.on('move', function(data) {
-  			console.log('----move----', data);
   			Game.remotePlayers[data.name].updateInfo(data)
   			Game.remotePlayers[data.name].updateElement();
   		});
@@ -85,9 +83,22 @@ angular.module('controllers', [])
   		socket.on('removeBlock', function(data) {
   			$scope.World.removeTile(data.x,data.y,data.z);
   			Game.redrawFromPoint(data.x,data.y,data.z);
-  		})
+  		});
+
+  		socket.on('playerSay', function(data) {
+  			Game.remotePlayers[data[0]].say(data[1]);
+  		});
   	})
 
+	//player say
+
+	$scope.toSay;
+
+	$scope.playerSayWhat = function() {
+		$scope.Player.say($scope.toSay);
+		socket.emit('playerSay', [$scope.Player.name, $scope.toSay]);
+		$scope.toSay = '';
+	}
 
 
   	// player creation

@@ -52,7 +52,9 @@
 			<p>click and drag to move world</p>
 		</div>
 		<div id="disclaimer">
-			<p>NOTE: only tested in Chrome so far, Firefox is known to have rendering bugs. World rotation is in development and can break player movement</p>
+			<form ng-submit="playerSayWhat()">
+				Say: <input type="text" ng-model="toSay">
+			</form>
 			<div id="rotateCtrl">
 				<p>rotate world</p>
 				<i ng-click="rotateWorld(1)" class="fa fa-share"></i>

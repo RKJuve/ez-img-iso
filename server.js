@@ -57,6 +57,11 @@ io.on('connection', function (socket) {
 		socket.broadcast.emit('removeBlock', data);
 	})
 
+	socket.on('playerSay', function(data) {
+		console.log('-say-', data);
+		socket.broadcast.emit('playerSay', data);
+	})
+
 });
 
 
