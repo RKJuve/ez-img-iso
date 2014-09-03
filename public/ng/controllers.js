@@ -50,7 +50,7 @@ angular.module('controllers', [])
   			}
   		})
 
-  		socket = io.connect('http://localhost');
+  		socket = io.connect('/');
 
   		window.onbeforeunload = function(){
 	    	socket.emit('playerLeave', Game.localPlayer.info());
