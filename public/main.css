@@ -6,6 +6,22 @@ html, body {
     overflow: hidden;
 }
 
+#playerCreate {
+	position: fixed;
+
+	background-color: #eee;
+
+	width: 400px;
+	margin-top: 200px;
+	margin-left: -200px;
+	left: 50%;
+	z-index: 777779;
+
+	padding: 20px;
+
+	outline: 1000px solid rgba(0,0,0,0.75);
+}
+
 #buildCtrl {
 	background: rgb(23, 23, 77);
 	position: relative;
@@ -156,6 +172,17 @@ html, body {
     -moz-user-select: none;
 	-webkit-user-select: none;
 	user-select: none;
+}
+
+.player h6 {
+	display: block;
+	margin: 0;
+	width: 100px;
+	position: relative;
+	bottom: 5px;
+	left: -33px;
+	color: #fff;
+	text-align: center;
 }
 
 body {

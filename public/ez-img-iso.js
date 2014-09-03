@@ -30,14 +30,16 @@ ISO = (function(){
 
 
 		//params/globals/private vars/split by function?
-		var target = document.getElementById(opts.target);
+		if (opts.target) {
+			var target = document.getElementById(opts.target);
+			var targetCenter = {};
+			targetCenter.x = target.offsetWidth / 2;
+			targetCenter.y = target.offsetHeight / 2;
+		}
 		var gridSize = opts.gridSize || 40;
 
 		var TileHash = opts.tiles;
 
-		var targetCenter = {};
-		targetCenter.x = target.offsetWidth / 2;
-		targetCenter.y = target.offsetHeight / 2;
 
 		//private game variables
 
@@ -321,6 +323,19 @@ ISO = (function(){
 			return this;
 		}
 
+		Player.prototype.info = function() {
+			return {
+				name: this.name,
+				position: this.position,
+				facing: this.facing
+			}
+		}
+
+		Player.prototype.updateInfo = function(data) {
+			this.position = data.position;
+			this.facing = data.facing;
+		}
+
 		Player.prototype.renderElement = function() {
 			var cartOBJ = isoToCart.call(this.world, this.position[0], this.position[1], this.position[2]);
 
@@ -333,6 +348,12 @@ ISO = (function(){
 			this.htmlElement.style.left = X + 'px',
 			this.htmlElement.style.top = Y + 'px',
 			this.htmlElement.style.zIndex = gameZ(this.position[0], this.position[1], this.position[2]) + 1;
+
+			var nameplate = '<h6>' + this.name + '</h6>';
+			var label = document.createElement('div');
+
+			label.innerHTML = nameplate;
+			this.htmlElement.appendChild(label.firstChild);
 
 			//facing
 			switch ( (this.facing + viewDir) % 4 ) {
@@ -385,7 +406,6 @@ ISO = (function(){
 		};
 
 		Player.prototype.setFacing = function(direction) {
-			console.log(direction);
 			this.facing = direction;
 		};
 
@@ -405,7 +425,6 @@ ISO = (function(){
 		};
 
 		Player.prototype.move = function(direction) {
-			console.log(direction);
 
 			switch (direction) {
 				case 0:
@@ -449,8 +468,6 @@ ISO = (function(){
 
 		Player.prototype.jumpTo = function(x,y,z) {
 			this.position = [x,y,z];
-			this.updateElement();
-
 		};
 
 		Player.prototype.relativeFacing = function() {
@@ -659,7 +676,7 @@ ISO = (function(){
 			'world': [],
 			'entities': [],
 			'localPlayer': {},
-			'remotePlayers': [],
+			'remotePlayers': {},
 			'getViewDir': function() {
 				return viewDir;
 			},
@@ -677,6 +694,15 @@ ISO = (function(){
 				this.localPlayer.renderElement();
 				return this.localPlayer;
 			},
+			'createRemotePlayer': function(opts) {
+				this.remotePlayers[opts.name] = new Player(opts, this.world);
+				console.log('createRemote', opts);
+				this.remotePlayers[opts.name].renderElement();
+			},
+			'removeRemotePlayer': function(name) {
+				this.remotePlayers[name].removeElement();
+				delete this.remotePlayers[name];
+			},
 			'initDraw': function() {
 				Draw(this.world, [0,0,0]);
 				this.entities.forEach(function(el) {
@@ -686,9 +712,17 @@ ISO = (function(){
 			'redrawFromPoint': function(x,y,z) {
 				DrawFromPoint(this.world, [x,y,z]);
 			},
+			'GenerateIntWorld': function() {
+				return GenerateDemoWorld(Array3d(28,28,18), {hills: 7});
+			},
+			'TileizeWorld': function(IntWorld) {
+				this.world = new TileWorld(IntWorld);
+
+				return this.world;
+			},
 			'GenerateDemoWorld': function() {
 				this.world = new TileWorld(GenerateDemoWorld(Array3d(28,28,18), {hills: 7}));
-				GenerateForest(this.world, this.entities, 77);
+				//GenerateForest(this.world, this.entities, 77);
 
 				return this.world;
 			}
@@ -709,3 +743,5 @@ ISO = (function(){
 		}
 	}
 })();
+
+module.exports = ISO;

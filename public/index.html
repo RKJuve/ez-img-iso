@@ -12,6 +12,10 @@
 		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
 		<script src="jquery.ui.touch-punch.min.js"></script>
 
+		<!-- socket.io SERVED FROM SERVER -->
+		<script src="/socket.io/socket.io.js"></script>
+
+
 		<!-- angular cdn -->
 		<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.min.js"></script>
 
@@ -25,8 +29,16 @@
 
 	</head>
 	<body ng-controller="MainCtrl">
-	<!-- <button id="redraw" onclick="redraw('#inner', World)">add hill <br> and redraw</button>
-	<button id="draw" onclick="Draw()">RECUR!</button> -->
+
+		<div id="playerCreate" ng-hide="playerCreated">
+			<form ng-submit="submit()">
+				Player Name: <input type="text" ng-model="playerName">
+				<button type="submit">create</button>
+			</form>
+		</div>
+
+		<div id="mask"></div>
+
 		<div id="outer">
 			<div id="inner">
 			
@@ -35,10 +47,9 @@
 
 		<div id="controls">
 			<p>Arrow keys to move</p>
-			<p>Spacebar to remove block in front of character</p>
-			<p>Shift-Space to add a block in front of character</p>
+			<p>Z to remove block in front of character</p>
+			<p>X to add a block in front of character</p>
 			<p>click and drag to move world</p>
-			<p>refresh to generate new world</p>
 		</div>
 		<div id="disclaimer">
 			<p>NOTE: only tested in Chrome so far, Firefox is known to have rendering bugs. World rotation is in development and can break player movement</p>
@@ -48,6 +59,7 @@
 				<i ng-click="rotateWorld(-1)" class="fa fa-share"></i>
 			</div>
 		</div>
+
 	</body>
 	<!-- js after page ready -->
 	<script src="ez-img-iso.js"></script>
