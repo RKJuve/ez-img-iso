@@ -674,9 +674,27 @@ ISO = (function(){
 			'setViewDir': function(newDir) {
 				this.world.clearRenderedElements();
 				this.localPlayer.removeElement();
+
+				var keys = Object.keys(this.remotePlayers);
+				var len = keys.length;
+				var i = 0;
+
+				while (i < len) {
+					this.remotePlayers[keys[i]].removeElement();
+					i++
+				}
+				
 				viewDir = newDir;
 				Draw(this.world, [0,0,0]);
 				this.localPlayer.renderElement();
+
+				i = 0;
+
+				while (i < len) {
+					this.remotePlayers[keys[i]].renderElement();
+					i++
+				}
+				
 				return viewDir;
 			},
 			'createLocalPlayer': function(opts) {
