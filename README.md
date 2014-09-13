@@ -1,11 +1,27 @@
 ez-img-iso
 =============
-![v0.0.2](/etc/v0.0.2.png)
+![v0.0.3](/etc/v0.0.3.png)
 
-1. ```git clone https://github.com/RKJuve/ez-canvas-iso.git```
+1. ```git clone https://github.com/RKJuve/ez-img-iso.git```
 2. ```npm install```
 3. ```npm start```
-4. open browser to http://localhost:3000
+4. open browser to http://localhost:3001
+
+### TODO:
+*sooner:*
+- rebuild character element so image, label, and say bubbles can be different z-indexes.  Should also allow for more 'modular' character art
+- refine the way objects are stored, rendered, and interacted with
+- reimplement image.isVisible method, so character outlines when behind objects can be attempted
+
+- update Usage guide
+
+- build new controls for demo game
+
+*later:*
+- NPCS?!?!
+- more generalized api for generating and rendering world
+- separate front-end and back-end modules
+
 
 ### Usage:
 
@@ -16,7 +32,7 @@ var Game = ISO.create({
   		tiles: {
   			1: {
   				type: 'grass',
-  				imgsrc: 'tiletest.png'
+  				imgsrc: 'grass.png'
   			},
   			2: {
   				type: 'rock',
@@ -66,15 +82,3 @@ first argument is player name, second is [x, y, z] position of player
 - 'setFacing(int)': sets players facing to the absolute direction supplied
 - 'move(x,y,z)': moves player relative to current position **this should change..**
 
-### TODO:
-*sooner:*
-- fix character controls w/respect to view direction
-- fix character movement audit:
-	- no moving through walls
-	- no flying
-	- allow falling
-
-- websockets + server-side api = multiplayer
-
-*later:*
-- more generalized api for generating and rendering world

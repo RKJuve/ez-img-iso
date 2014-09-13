@@ -327,6 +327,8 @@ ISO = (function(){
 			div.className = 'playerSay';
 			div.innerHTML = words;
 
+			div.style.zIndex = parseInt(this.htmlElement.style.zIndex) + 100;
+
 			this.htmlElement.appendChild(div);
 
 			setTimeout(function(){

@@ -15,7 +15,7 @@ angular.module('controllers', [])
   		tiles: {
   			1: {
   				type: 'grass',
-  				imgsrc: 'tiletest.png'
+  				imgsrc: 'grass.png'
   			},
   			2: {
   				type: 'rock',
