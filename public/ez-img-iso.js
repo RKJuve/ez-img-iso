@@ -3,7 +3,6 @@
 // ez-img-iso.js
 // a simple isometric graphics engine
 // April 2014 - Ryan Juve
-// namespace/module
 
 
 ISO = (function(){
@@ -500,87 +499,56 @@ ISO = (function(){
 
 
 		// draw fcn
-		function Draw(World, startPoint) {
+		function Draw(tileWorld, startPoint) {
 			var toCheckArray = [], checkedHash = {}, maxX, maxY, maxZ;
+			
 			switch (viewDir) {
 				case 0:
-					maxXview = World.length-1;
-					maxYview = World[0].length-1;
-					maxZview = World[0][0].length;
+					var maxXview = tileWorld.length-1;
+					var maxYview = tileWorld[0].length-1;
 					break;
 				case 1:
-					maxXview = 0;
-					maxYview = World[0].length-1;
-					maxZview = World[0][0].length;
+					var maxXview = 0;
+					var maxYview = tileWorld[0].length-1;
 					break;
 				case 2: 
-					maxXview = 0;
-					maxYview = 0;
-					maxZview = World[0][0].length;
+					var maxXview = 0;
+					var maxYview = 0;
 					break;
 				case 3:
-					maxXview = World.length-1;
-					maxYview = 0;
-					maxZview = World[0][0].length;
+					var maxXview = tileWorld.length-1;
+					var maxYview = 0;
 					break;
 			}
-			maxX = World.length;
-			maxY = World[0].length;
-			maxZ = World[0][0].length;
+
+			maxX = tileWorld.length;
+			maxY = tileWorld[0].length;
+			maxZ = tileWorld[0][0].length;
 
 			toCheckArray.push(startPoint);
-			checkedHash[0+','+0+','+0] = true;
+			checkedHash[startPoint.toString()] = true;
 			
 			while (toCheckArray.length > 0) {// there are still Coords to check
 				var x = toCheckArray[0][0],
 					y = toCheckArray[0][1],
 					z = toCheckArray[0][2];
-					
-				if (World[x][y][z] === 0) {
+				
+				// if co-ords empty
+				if (tileWorld[x][y][z] === 0) {
+					// 
 					if (x+1 < maxX && checkedHash[(x+1)+','+y+','+z] !== true) {
 						checkedHash[(x+1)+','+y+','+z] = true;
 						toCheckArray.push([x+1,y,z]);
+					}
+					if (x-1 > -1 && checkedHash[(x-1)+','+y+','+z] !== true) {
+						checkedHash[(x-1)+','+y+','+z] = true;
+						toCheckArray.push([x-1,y,z]);
 					}
 					if (y+1 < maxY && checkedHash[x+','+(y+1)+','+z] !== true) {
 						checkedHash[x+','+(y+1)+','+z] = true;
 						toCheckArray.push([x,y+1,z]);
 					}
-					if (z+1 < maxZ && checkedHash[x+','+y+','+(z+1)] !== true) {
-						checkedHash[x+','+y+','+(z+1)] = true;
-						toCheckArray.push([x,y,z+1]);
-					}
-				} else if (World[x][y][z] instanceof Tile) {
-					World.renderTile(x,y,z);
-					if ( (x === maxXview || y === maxYview) && z + 1 < maxZ ) {
-						toCheckArray.push([x,y,z+1]);
-					}
-				} else {
-					console.log('----WAT----', World[x][y][z], x,y,z);
-
-				}
-				toCheckArray.shift();
-			}
-		}
-		function DrawFromPoint(World, startPoint) {
-			var toCheckArray = [], checkedHash = {}, maxX, maxY, maxZ;
-			maxX = World.length;
-			maxY = World[0].length;
-			maxZ = World[0][0].length;
-
-			toCheckArray.push(startPoint);
-			checkedHash[0+','+0+','+0] = true;
-			
-			while (toCheckArray.length > 0) {// there are still Coords to check
-				var x = toCheckArray[0][0],
-					y = toCheckArray[0][1],
-					z = toCheckArray[0][2];
-					
-				if (World[x][y][z] === 0) {
-					if (x-1 > 0 && checkedHash[(x-1)+','+y+','+z] !== true) {
-						checkedHash[(x-1)+','+y+','+z] = true;
-						toCheckArray.push([x-1,y,z]);
-					}
-					if (y-1 > 0 && checkedHash[x+','+(y-1)+','+z] !== true) {
+					if (y-1 > -1 && checkedHash[x+','+(y-1)+','+z] !== true) {
 						checkedHash[x+','+(y-1)+','+z] = true;
 						toCheckArray.push([x,y-1,z]);
 					}
@@ -588,17 +556,23 @@ ISO = (function(){
 						checkedHash[x+','+y+','+(z+1)] = true;
 						toCheckArray.push([x,y,z+1]);
 					}
-				} else if (World[x][y][z] instanceof Tile) {
-					World.renderTile(x,y,z);
-					if (x === maxX - 1 || y === maxY - 1) {
+
+				// if co-ords have a tile
+				} else if (tileWorld[x][y][z] instanceof Tile) {
+					// render it
+					tileWorld.renderTile(x,y,z);
+					// if tile is on visible edge of world, draw all tiles below it
+					if ( (x === maxXview || y === maxYview) && z + 1 < maxZ ) {
 						toCheckArray.push([x,y,z+1]);
 					}
 				} else {
-					console.log('----WAT----', World[x][y][z], x,y,z);
+					console.log('----WAT----', tileWorld[x][y][z], x,y,z);
+
 				}
 				toCheckArray.shift();
 			}
 		}
+
 		// createtileworld
 		function TileWorld(array) {
 			var X = array.length,
@@ -727,7 +701,7 @@ ISO = (function(){
 				})
 			},
 			'redrawFromPoint': function(x,y,z) {
-				DrawFromPoint(this.world, [x,y,z]);
+				Draw(this.world, [x,y,z]);
 			},
 			'GenerateIntWorld': function() {
 				return GenerateDemoWorld(Array3d(28,28,18), {hills: 7});
